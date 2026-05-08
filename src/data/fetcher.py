@@ -11,9 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 def get_sp500_tickers(url: str) -> list:
-    tables = pd.read_html(url)
+    import io
+    import requests
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; stock-trading-ml/1.0)"}
+    resp = requests.get(url, headers=headers, timeout=15)
+    resp.raise_for_status()
+    tables = pd.read_html(io.StringIO(resp.text))
     df = tables[0]
-    tickers = df['Symbol'].str.replace('.', '-', regex=False).tolist()
+    tickers = df["Symbol"].str.replace(".", "-", regex=False).tolist()
     logger.info(f"Found {len(tickers)} S&P 500 tickers")
     return tickers
 

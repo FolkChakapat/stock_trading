@@ -55,7 +55,7 @@ def walk_forward_train(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
             train_df = df[df["date"].isin(dates[:i])].dropna(subset=feat_cols + [target_col])
             if len(train_df) < 50:
                 continue
-            X_tr = train_df[feat_cols].values
+            X_tr = train_df[feat_cols]
             y_tr = train_df[target_col].values
 
             model = lgb.LGBMRegressor(**lgbm_params)
@@ -70,7 +70,7 @@ def walk_forward_train(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
             continue
 
         test_df = df[df["date"] == date].copy()
-        X_te = test_df[feat_cols].values
+        X_te = test_df[feat_cols]
         test_df["predicted_excess"] = model.predict(X_te)
         test_df["predicted_rank"] = test_df["predicted_excess"].rank(pct=True)
 
